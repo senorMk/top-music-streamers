@@ -15,69 +15,60 @@ const Home = () => {
   const [topNigerian, setTopNigerian] = useState<Array<artist>>([]);
   const [topSouthAfrican, setTopSouthAfrican] = useState<Array<artist>>([]);
 
+  const [loadingZM, setLoadingZM] = useState<boolean>(false);
+  const [loadingNG, setLoadingNG] = useState<boolean>(false);
+  const [loadingZA, setLoadingZA] = useState<boolean>(false);
+
   useEffect(() => {
-    const getTopZambian = async () => {
+    const getTopMusicStreamers = async (countryCode: string) => {
       try {
         let response = await axios.get('/api/streamers', {
           params: {
-            countryCode: 'ZM',
+            countryCode: countryCode,
           },
         });
 
         return response.data.artists;
       } catch (error) {
-        console.log(error);
+        return [];
       }
     };
 
-    const getTopNigerian = async () => {
-      try {
-        let response = await axios.get('/api/streamers', {
-          params: {
-            countryCode: 'NG',
-          },
-        });
+    setLoadingZM(true);
+    getTopMusicStreamers('ZM')
+      .then((topZambian) => {
+        setLoadingZM(false);
+        if (topZambian) {
+          setTopZambian(topZambian);
+        }
+      })
+      .catch((error) => {
+        setLoadingZM(false);
+      });
 
-        return response.data.artists;
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    setLoadingNG(true);
+    getTopMusicStreamers('NG')
+      .then((topNigerian) => {
+        setLoadingNG(false);
+        if (topNigerian) {
+          setTopNigerian(topNigerian);
+        }
+      })
+      .catch((error) => {
+        setLoadingNG(false);
+      });
 
-    const getTopSouthAfrican = async () => {
-      try {
-        let response = await axios.get('/api/streamers', {
-          params: {
-            countryCode: 'ZA',
-          },
-        });
-
-        return response.data.artists;
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getTopZambian().then((topZambian) => {
-      if (topZambian) {
-        setTopZambian(topZambian);
-        console.log('topZambian: ', topZambian);
-      }
-    });
-
-    getTopNigerian().then((topNigerian) => {
-      if (topNigerian) {
-        setTopNigerian(topNigerian);
-        console.log('topNigerian: ', topNigerian);
-      }
-    });
-
-    getTopSouthAfrican().then((topSouthAfrican) => {
-      if (topSouthAfrican) {
-        setTopSouthAfrican(topSouthAfrican);
-        console.log('topSouthAfrican: ', topSouthAfrican);
-      }
-    });
+    setLoadingZA(true);
+    getTopMusicStreamers('ZA')
+      .then((topSouthAfrican) => {
+        setLoadingZA(false);
+        if (topSouthAfrican) {
+          setTopSouthAfrican(topSouthAfrican);
+        }
+      })
+      .catch((error) => {
+        setLoadingZA(false);
+      });
   }, []);
 
   return (
@@ -86,6 +77,13 @@ const Home = () => {
 
       <div className="flex flex-col items-center mt-5 p-2">
         <h2 className="text-xl text-center text-white">ZAMBIA</h2>
+        {loadingZM ? (
+          <div className="flex flex-col items-center mt-5 group w-56 mx-auto rounded-lg border-2 p-6 ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-sky-500 hover:ring-sky-500 hover:text-white">
+            <h2 className="text-xl text-center text-white">Loading...</h2>
+          </div>
+        ) : (
+          <></>
+        )}
         <div className="py-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-3 p-5 overflow-hidden">
           {topZambian.map((artist) => (
             <a
@@ -117,6 +115,13 @@ const Home = () => {
 
       <div className="flex flex-col items-center mt-5 p-2">
         <h2 className="text-xl text-center text-white">NIGERIA</h2>
+        {loadingNG ? (
+          <div className="flex flex-col items-center mt-5 group w-56 mx-auto rounded-lg border-2 p-6 ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-sky-500 hover:ring-sky-500 hover:text-white">
+            <h2 className="text-xl text-center text-white">Loading...</h2>
+          </div>
+        ) : (
+          <></>
+        )}
         <div className="py-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-3 p-5 overflow-hidden">
           {topNigerian.map((artist) => (
             <a
@@ -148,6 +153,13 @@ const Home = () => {
 
       <div className="flex flex-col items-center mt-5 p-2">
         <h2 className="text-xl text-center text-white">SOUTH AFRICA</h2>
+        {loadingZA ? (
+          <div className="flex flex-col items-center mt-5 group w-56 mx-auto rounded-lg border-2 p-6 ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-sky-500 hover:ring-sky-500 hover:text-white">
+            <h2 className="text-xl text-center text-white">Loading...</h2>
+          </div>
+        ) : (
+          <></>
+        )}
         <div className="py-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-3 p-5 overflow-hidden">
           {topSouthAfrican.map((artist) => (
             <a
